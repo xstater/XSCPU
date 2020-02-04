@@ -6,7 +6,7 @@ DIR_SRC_RAM=${DIR_SRC}"/ram"
 DIR_OUTPUT="build"
 
 CC=iverilog
-CC_ARGS=-Wall
+CC_ARGS=
 
 SIM=vvp
 SIM_ARGS=
