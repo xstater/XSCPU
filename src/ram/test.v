@@ -9,8 +9,8 @@ module test;
     end
 
     initial begin
-        $dumpfile("test.vcd");
-        $dumpvars(0,test);
+        //$dumpfile("test.vcd");
+        //$dumpvars(0,test);
 
         clk = 0;
 
