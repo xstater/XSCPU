@@ -1,13 +1,12 @@
 `timescale 1ns/100ps
 
 module test;
-
     reg clk;
 
     always #5 begin
         clk <= ~clk;
     end
-
+    
     initial begin
         //$dumpfile("test.vcd");
         //$dumpvars(0,test);
