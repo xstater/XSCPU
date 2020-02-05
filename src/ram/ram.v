@@ -6,21 +6,32 @@ module ram(
     input wire wr,
     input wire reset,
     input wire [`RAM_ADDR_WIDTH_VECTOR] addr,
-    inout wire [`RAM_DATA_WIDTH_VECTOR] data
+    input wire [`RAM_DATA_WIDTH_VECTOR] data_in,
+    output wire [`RAM_DATA_WIDTH_VECTOR] data_out
 );
 
     reg [`RAM_DATA_WIDTH_VECTOR] rdata[`RAM_SIZE_VECTOR];
     integer i;
 
+    assign data_out = en == `ENABLE ? rdata[addr] : 32'bz;
+
+    initial begin
+        for (i = 0; i < `RAM_SIZE; i = i + 1) begin
+            rdata[i] <= `RAM_DATA_WIDTH'b0;
+        end
+    end
+
     always @(posedge clk) begin
         if (en == `ENABLE) begin
-            if (reset == `ENABLE) begin
-                for (i = 0; i < `RAM_SIZE; i = i + 1) begin
-                    rdata[i] <= `RAM_DATA_WIDTH'b0;
-                end
-            end else if (wr == `RAM_WRITE) begin
-                
+            if (wr == `RAM_WRITE) begin
+                rdata[addr] <= data_in;
             end
+        end
+    end
+
+    always @(posedge reset) begin
+        for (i = 0; i < `RAM_SIZE; i = i + 1) begin
+            rdata[i] <= `RAM_DATA_WIDTH'b0;
         end
     end
 endmodule // ram
