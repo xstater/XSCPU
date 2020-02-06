@@ -13,17 +13,20 @@ SIM_ARGS=
 WV=gtkwave
 WV_ARGS=
 
-if [[ $1 == "clear" ]]; then
-    for module in `ls ${DIR_SRC}`; do
-        dir=${DIR_SRC}"/"${module}
-        if [[ -d ${dir} ]]; then
-            if [[ -d ${dir}"/build" ]]; then
-                rm -rf ${dir}"/build"
-            fi
+echo "Clearing build directories..."
+for module in `ls ${DIR_SRC}`; do
+    dir=${DIR_SRC}"/"${module}
+    if [[ -d ${dir} ]]; then
+        if [[ -d ${dir}"/build" ]]; then
+            rm -rf ${dir}"/build"
         fi
-    done
+    fi
+done
+echo "Done"
+
+if [[ $1 == "" ]]; then
     exit 0;
-fi
+fi;
 
 if [[ $1 != "ram"  && $1 != "alu" ]]; then
     echo "Unknow module name!"
