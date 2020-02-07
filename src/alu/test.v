@@ -3,19 +3,22 @@
 `include "src/alu/alu.vh"
 
 module test;
-    parameter STEP = 1.0;
+    parameter STEP = 10.0;
 
     reg clk;
+    reg en;
+    reg in_select;
     reg [`ALU_OPS_WIDTH_VECTOR] op;
-    reg [`ALU_INPUT_WIDTH_VECTOR] i1;
-    reg [`ALU_INPUT_WIDTH_VECTOR] i2;
-    wire [`ALU_OUTPUT_WIDTH_VECTOR] o;
+    reg [`ALU_DATA_WIDTH_VECTOR] in;
+    wire [`ALU_DATA_WIDTH_VECTOR] out;
 
     alu alu1(
+        .clk(clk),
+        .en(en),
+        .in_select(in_select),
         .op(op),
-        .i1(i1),
-        .i2(i2),
-        .o(o)
+        .in(in),
+        .out(out)
     );
 
     always #(STEP / 2) begin
@@ -26,15 +29,28 @@ module test;
         $dumpfile("test.vcd");
         $dumpvars(0,test);
 
-        #0 begin
-            clk <= 0;
-            op <= `ALU_OP_ADD;
-            i1 <= 32'h33;
-            i2 <= 32'h11;
+        clk <= 1'b0;
+        en <= `DISABLE;
+        in_select <= `ALU_IN_SELECT_I1;
+        op <= `ALU_OP_ADD;
+        in <= `ALU_DATA_WIDTH'b0;
+
+        #STEP begin
+            en <= `ENABLE;
+            in <= `ALU_DATA_WIDTH'h33;
         end
 
         #STEP begin
-            if (o == 32'h44) begin
+            in_select <= `ALU_IN_SELECT_I2;
+            in <= `ALU_DATA_WIDTH'h11;
+        end
+
+        #STEP begin
+            en <= `DISABLE;
+        end
+
+        #STEP begin
+            if (out == 32'h44) begin
                 $display("ADD OK");
             end else begin
                 $display("ADD Error");
@@ -42,8 +58,8 @@ module test;
             #1 op <= `ALU_OP_SUB;
         end
 
-        #STEP begin
-            if (o == 32'h22) begin
+        #(STEP - 1) begin
+            if (out == 32'h22) begin
                 $display("SUB OK");
             end else begin
                 $display("SUB Error");
@@ -51,8 +67,8 @@ module test;
             #1 op <= `ALU_OP_INC;
         end
 
-        #STEP begin
-            if (o == 32'h34) begin
+        #(STEP - 1) begin
+            if (out == 32'h34) begin
                 $display("INC OK");
             end else begin
                 $display("INC Error");
@@ -60,8 +76,8 @@ module test;
             #1 op <= `ALU_OP_DEC;
         end
 
-        #STEP begin
-            if (o == 32'h32) begin
+        #(STEP - 1) begin
+            if (out == 32'h32) begin
                 $display("DEC OK");
             end else begin
                 $display("DEC Error");
@@ -69,8 +85,8 @@ module test;
             #1 op <= `ALU_OP_AND;
         end
 
-        #STEP begin
-            if (o == 32'h11) begin
+        #(STEP - 1) begin
+            if (out == 32'h11) begin
                 $display("AND OK");
             end else begin
                 $display("AND Error");
@@ -78,8 +94,8 @@ module test;
             #1 op <= `ALU_OP_OR;
         end
 
-        #STEP begin
-            if (o == 32'h33) begin
+        #(STEP - 1) begin
+            if (out == 32'h33) begin
                 $display("OR OK");
             end else begin
                 $display("OR Error");
@@ -87,8 +103,8 @@ module test;
             #1 op <= `ALU_OP_NOT;
         end
 
-        #STEP begin
-            if (o == 32'hFFFFFFCC) begin
+        #(STEP - 1) begin
+            if (out == 32'hFFFFFFCC) begin
                 $display("NOT OK");
             end else begin
                 $display("NOT Error");
@@ -96,17 +112,18 @@ module test;
             #1 op <= `ALU_OP_NEG;
         end
 
-        #STEP begin
-            if (o == 32'hFFFFFFCD) begin
+        #(STEP - 1) begin
+            if (out == 32'hFFFFFFCD) begin
                 $display("NEG OK");
             end else begin
                 $display("NEG Error");
             end
         end
 
-        #STEP begin
+        #(STEP - 1) begin
             $finish();
         end
 
     end
+
 endmodule // test
