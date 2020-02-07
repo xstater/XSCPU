@@ -28,7 +28,7 @@ if [[ $1 == "" ]]; then
     exit 0;
 fi;
 
-if [[ $1 != "ram"  && $1 != "alu" && $1 != "pc" ]]; then
+if [[ $1 != "ram"  && $1 != "alu" && $1 != "pc" && $1 != "stack" ]]; then
     echo "Unknow module name!"
     exit 1;
 fi
